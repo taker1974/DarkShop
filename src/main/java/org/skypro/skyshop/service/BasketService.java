@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.skypro.skyshop.model.basket.BasketItem;
 import org.skypro.skyshop.model.basket.ProductBasket;
 import org.skypro.skyshop.model.basket.UserBasket;
+import org.skypro.skyshop.model.exceptions.NoSuchProductException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
@@ -71,7 +72,7 @@ public class BasketService {
     public void addProduct(@NotNull UUID id) {
         var product = storageService.getProductById(id);
         if (product.isEmpty()) {
-            throw new IllegalArgumentException("Продукт недоступен");
+            throw new NoSuchProductException();
         }
         productBasket.addProduct(product.get().getId(), 1);
     }
@@ -90,7 +91,7 @@ public class BasketService {
         Function<Map.Entry<UUID, Integer>, BasketItem> toBasketItem = entry -> {
             var product = storageService.getProductById(entry.getKey());
             if (product.isEmpty()) {
-                throw new IllegalArgumentException("Продукт недоступен");
+                throw new NoSuchProductException();
             }
             return new BasketItem(product.get(), entry.getValue());
         };

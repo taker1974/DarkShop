@@ -1,6 +1,6 @@
 // SkyPro
 // Терских Константин, kostus.online.1974@yandex.ru, 2024
-// Домашнее задание по теме "Жизненный цикл компонентов Spring Boot приложения"
+// Домашнее задание по теме "Зависимости и исключения в Spring Boot"
 
 package org.skypro.skyshop;
 
