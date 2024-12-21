@@ -15,6 +15,7 @@ import org.skypro.skyshop.service.SearchService;
 import org.skypro.skyshop.service.StorageService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
@@ -58,7 +59,7 @@ public class ShopController {
         return searchService.search(pattern);
     }
 
-    @GetMapping("/basket/{id}")
+    @PostMapping("/basket/{id}")
     @NotNull
     public String addProduct(@PathVariable("id") UUID id) {
         basketService.addProduct(id);
