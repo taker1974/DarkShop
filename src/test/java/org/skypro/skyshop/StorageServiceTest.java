@@ -8,15 +8,10 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.skypro.skyshop.model.article.Article;
 import org.skypro.skyshop.model.product.Product;
-import org.skypro.skyshop.model.product.SimpleProduct;
 import org.skypro.skyshop.service.StorageService;
-
-import java.util.Map;
-import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class StorageServiceTest {
@@ -57,72 +52,26 @@ class StorageServiceTest {
         Основные методы.
      */
 
-    private boolean isMapOfProducts(@NotNull Object o) {
-        return (o instanceof Map<?, ?> map) &&
-                !map.isEmpty() &&
-                map.keySet().iterator().next() instanceof UUID &&
-                map.values().iterator().next() instanceof Product;
-    }
-
-    private boolean isMapOfArticles(@NotNull Object o) {
-        return (o instanceof Map<?, ?> map) &&
-                !map.isEmpty() &&
-                map.keySet().iterator().next() instanceof UUID &&
-                map.values().iterator().next() instanceof Article;
-    }
-
+    // getProductsAll()
     @Test
-        // getProductsAll()
     void whenGetProductsAll_thenStorageServiceReturnsGoodMap() {
         Assertions.assertNotNull(storageService.getProductsAll());
         Assertions.assertFalse(storageService.getProductsAll().isEmpty());
-        Assertions.assertTrue(isMapOfProducts(storageService.getProductsAll()));
+        Assertions.assertTrue(TestTools.isMapOfProducts(storageService.getProductsAll()));
     }
 
+    // getArticlesAll()
     @Test
-        // getArticlesAll()
-    void whenGetArticlesAll_thenStorageServiceReturnsGoodArticles() {
+    void whenGetArticlesAll_thenStorageServiceReturnsGoodMap() {
         Assertions.assertNotNull(storageService.getArticlesAll());
         Assertions.assertFalse(storageService.getArticlesAll().isEmpty());
-        Assertions.assertTrue(isMapOfArticles(storageService.getArticlesAll()));
+        Assertions.assertTrue(TestTools.isMapOfArticles(storageService.getArticlesAll()));
     }
 
-    public static final UUID UUID_EXISTING_MOCK_PRODUCT = UUID.fromString("12345678-1234-1234-1234-123456789012");
-    public static final UUID UUID_NOT_EXISTING_MOCK_PRODUCT = UUID.fromString("12345678-4321-1234-1234-123456789012");
-
-    public static final UUID UUID_EXISTING_MOCK_ARTICLE = UUID.fromString("12345678-1234-0000-1234-123456789012");
-    public static final UUID UUID_NOT_EXISTING_MOCK_ARTICLE = UUID.fromString("12345678-4321-1111-1234-123456789012");
-
-    private Product getProductMock() {
-        var title = "Молоко с планеты Венера";
-        int price = 10;
-
-        var product = Mockito.mock(SimpleProduct.class);
-
-        Mockito.when(product.getId()).thenReturn(UUID_EXISTING_MOCK_PRODUCT);
-        Mockito.when(product.getTitle()).thenReturn(title);
-        Mockito.when(product.getPrice()).thenReturn(price);
-
-        return product;
-    }
-
-    private Article getArticleMock() {
-        var title = "Поколение, глотнувшее свободы";
-        var content = "Lorem ipsum, по гамбургскому счёту";
-
-        var article = Mockito.mock(Article.class);
-
-        Mockito.when(article.getId()).thenReturn(UUID_EXISTING_MOCK_ARTICLE);
-        Mockito.when(article.getTitle()).thenReturn(title);
-        Mockito.when(article.getContent()).thenReturn(content);
-
-        return article;
-    }
-
+    // getProductById
     @Test
-        // getProductById
-    void whenGetProductById_thenStorageServiceReturnsGoodProduct() {
-        var uniqueProduct = getProductMock();
+    void whenGetProductById_thenStorageServiceReturnsProductOrEmpty() {
+        var uniqueProduct = TestTools.getProductMock();
         var id = uniqueProduct.getId();
 
         storageService.addProduct(uniqueProduct);
@@ -136,15 +85,15 @@ class StorageServiceTest {
         Assertions.assertEquals(product.getTitle(), uniqueProduct.getTitle());
         Assertions.assertEquals(product.getPrice(), uniqueProduct.getPrice());
 
-        optional = storageService.getProductById(UUID_NOT_EXISTING_MOCK_PRODUCT);
+        optional = storageService.getProductById(TestTools.UUID_NOT_EXISTING_MOCK_PRODUCT);
         Assertions.assertNotNull(optional);
         Assertions.assertFalse(optional.isPresent());
     }
 
+    // getArticleById
     @Test
-        // getArticleById
-    void whenGetArticleById_thenStorageServiceReturnsGoodArticle() {
-        var uniqueArticle = getArticleMock();
+    void whenGetArticleById_thenStorageServiceReturnsArticleOrEmpty() {
+        var uniqueArticle = TestTools.getArticleMock();
         var id = uniqueArticle.getId();
 
         storageService.addArticle(uniqueArticle);
@@ -158,8 +107,23 @@ class StorageServiceTest {
         Assertions.assertEquals(article.getTitle(), uniqueArticle.getTitle());
         Assertions.assertEquals(article.getContent(), uniqueArticle.getContent());
 
-        optional = storageService.getArticleById(UUID_NOT_EXISTING_MOCK_ARTICLE);
+        optional = storageService.getArticleById(TestTools.UUID_NOT_EXISTING_MOCK_ARTICLE);
         Assertions.assertNotNull(optional);
         Assertions.assertFalse(optional.isPresent());
+    }
+
+    // getSearchableItems
+    @Test
+    void whenGetSearchableItems_thenStorageServiceReturnsGoodCollection() {
+        var optional = storageService.getArticleById(TestTools.UUID_EXISTING_MOCK_ARTICLE);
+        if (optional.isEmpty()) {
+            storageService.addArticle(TestTools.getArticleMock());
+        }
+
+        var searchableItems = storageService.getSearchableItems();
+        Assertions.assertNotNull(searchableItems);
+        Assertions.assertFalse(searchableItems.isEmpty());
+
+        Assertions.assertTrue(TestTools.isCollectionOfSearchable(searchableItems, true));
     }
 }
