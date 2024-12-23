@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import org.skypro.skyshop.model.article.Article;
 import org.skypro.skyshop.model.product.Product;
 import org.skypro.skyshop.model.product.SimpleProduct;
+import org.skypro.skyshop.model.search.SearchResult;
 import org.skypro.skyshop.model.search.Searchable;
 
 import java.util.Collection;
@@ -31,48 +32,39 @@ public class TestTools {
                 map.values().iterator().next() instanceof Article;
     }
 
-    public static final UUID UUID_EXISTING_MOCK_PRODUCT = UUID.fromString("12345678-1234-1234-1234-123456789012");
-    public static final UUID UUID_NOT_EXISTING_MOCK_PRODUCT = UUID.fromString("12345678-4321-1234-1234-123456789012");
+    public static final UUID UUID_PRODUCT = UUID.fromString("12345678-1234-1234-1234-123456789012");
+    public static final String PRODUCT_TITLE = "Молоко с планеты Венера";
+    public static final int PRODUCT_PRICE = 17;
+    public static final String PRODUCT_SEARCHABLE_NAME = "Product-Unique-87243984985938";
 
-    public static final UUID UUID_EXISTING_MOCK_ARTICLE = UUID.fromString("12345678-1234-0000-1234-123456789012");
-    public static final UUID UUID_NOT_EXISTING_MOCK_ARTICLE = UUID.fromString("12345678-4321-1111-1234-123456789012");
+    public static final UUID UUID_ARTICLE = UUID.fromString("12345678-1234-0000-1234-123456789012");
+    public static final String ARTICLE_TITLE = "Вино из одуванчиков";
+    public static final String ARTICLE_SEARCHABLE_NAME = "Article-Unique-87243984985938";
 
-    public static Product getProductMock() {
-        var title = "Молоко с планеты Венера";
-        int price = 10;
+    public static final String SEARCH_PATTERN = "енера";
 
-        var product = Mockito.mock(SimpleProduct.class);
-
-        Mockito.when(product.getId()).thenReturn(UUID_EXISTING_MOCK_PRODUCT);
-        Mockito.when(product.getTitle()).thenReturn(title);
-        Mockito.when(product.getPrice()).thenReturn(price);
-
-        return product;
-    }
-
-    public static final String EXISTING_MOCK_SEARCHABLE_NAME = "Article-Unique-87243984985938";
-
-    public static Article getArticleMock() {
-        var article = Mockito.mock(Article.class);
-        Mockito.when(article.getId()).thenReturn(UUID_EXISTING_MOCK_ARTICLE);
-        return article;
+    public static boolean isNotCollection(@NotNull Object o, boolean testEmpty) {
+        boolean isCollection = o instanceof Collection<?>;
+        if (!isCollection) {
+            return true;
+        }
+        Collection<?> collection = (Collection<?>) o;
+        return testEmpty && collection.isEmpty();
     }
 
     public static boolean isCollectionOfSearchable(@NotNull Object o, boolean testItem) {
-        boolean isCollection = o instanceof Collection<?>;
-        if (!isCollection) {
+        if (isNotCollection(o, testItem)) {
             return false;
         }
+        var nextItem = ((Collection<?>)o).iterator().next();
+        return nextItem instanceof Searchable;
+    }
 
-        Collection<?> collection = (Collection<?>) o;
-        var notEmpty = testItem && !collection.isEmpty();
-        if (!notEmpty) {
+    public static boolean isCollectionOfSearchResult(@NotNull Object o, boolean testItem) {
+        if (isNotCollection(o, testItem)) {
             return false;
         }
-
-        var nextItem = collection.iterator().next();
-        @SuppressWarnings("inline")
-        boolean result = nextItem instanceof Searchable;
-        return result;
+        var nextItem = ((Collection<?>)o).iterator().next();
+        return nextItem instanceof SearchResult;
     }
 }

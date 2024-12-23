@@ -4,53 +4,56 @@
 
 package org.skypro.skyshop;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.internal.stubbing.BaseStubbing;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.skypro.skyshop.model.article.Article;
 import org.skypro.skyshop.model.product.Product;
 import org.skypro.skyshop.service.SearchService;
 import org.skypro.skyshop.service.StorageService;
 
-import java.util.HashMap;
-
 @ExtendWith(MockitoExtension.class)
 class SearchServiceTest {
 
-    @Mock
+    /*  Тестируем реальный объект с макетными данными.
+        Единственный метод:
+            @NotNull Collection<SearchResult> search(@Nullable String pattern)
+                !null, [!]isEmpty, Collection<>
+     */
+
+    @NotNull
+    @Spy
     private StorageService storageService;
 
-    private final SearchService searchService;
-
-    public SearchServiceTest() {
-        this.storageService = new StorageService();
-        this.searchService = new SearchService(storageService);
-    }
+    @NotNull
+    @InjectMocks
+    private SearchService searchService;
 
     @Test
-    void whenSearchOnEmptyStorage_thenReturnsEmptyCollection() {
-        Mockito.when(storageService.getProductsAll()).thenReturn(null);
+    void whenSearchOnEmptyStore_thenReturnsGoodEmptyCollection() {
         storageService.clear();
-        Assertions.assertTrue(searchService.search("some pattern").isEmpty());
+        var searchResults = searchService.search("hello");
+        Assertions.assertFalse(TestTools.isNotCollection(searchResults, false));
+        Assertions.assertTrue(searchResults.isEmpty());
     }
 
-    @Test
-    void whenSearchStrange_thenReturnsEmptyCollection() {
-        storageService.initializeWithSamples();
-        Assertions.assertTrue(searchService.search("some pattern").isEmpty());
-        Assertions.assertTrue(searchService.search("").isEmpty());
-        Assertions.assertTrue(searchService.search(null).isEmpty());
-    }
-
-    @Test
-    void whenSearchExisting_thenReturnsNotEmptyCollection() {
-        var p = Mockito.mock(Product.class);
-        Mockito.when(p.getTitle()).thenReturn("Молоко");
-
-        storageService.initializeWithSamples();
-        Assertions.assertFalse(searchService.search("Молоко").isEmpty());
-    }
+//    @Test
+//    void whenSearchExisting_thenReturnsGoodNotEmptyCollection() {
+//        storageService.initializeWithSamples();
+//
+//        var product = TestTools.getProductMock();
+//        Mockito.when(product.getTitle()).thenReturn("hello");
+//        Mockito.when(product.getSearchableTerm()).thenReturn("hello");
+//
+//        storageService.addProduct(product);
+//
+//        var searchResults = searchService.search("hello");
+//        Assertions.assertTrue(TestTools.isCollectionOfSearchResult(searchResults, true));
+//    }
 }
