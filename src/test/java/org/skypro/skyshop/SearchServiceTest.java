@@ -15,8 +15,11 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.skypro.skyshop.model.article.Article;
 import org.skypro.skyshop.model.product.Product;
+import org.skypro.skyshop.model.product.SimpleProduct;
 import org.skypro.skyshop.service.SearchService;
 import org.skypro.skyshop.service.StorageService;
+
+import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class SearchServiceTest {
@@ -36,24 +39,36 @@ class SearchServiceTest {
     private SearchService searchService;
 
     @Test
-    void whenSearchOnEmptyStore_thenReturnsGoodEmptyCollection() {
+    void whenSearchOnEmptyStore_thenReturnsEmptyParticularCollection() {
         storageService.clear();
-        var searchResults = searchService.search("hello");
-        Assertions.assertFalse(TestTools.isNotCollection(searchResults, false));
+
+        var searchResults = searchService.search(TestTools.SEARCH_PATTERN);
+
         Assertions.assertTrue(searchResults.isEmpty());
+        Assertions.assertFalse(TestTools.isNotCollection(searchResults, false));
     }
 
-//    @Test
-//    void whenSearchExisting_thenReturnsGoodNotEmptyCollection() {
-//        storageService.initializeWithSamples();
-//
-//        var product = TestTools.getProductMock();
-//        Mockito.when(product.getTitle()).thenReturn("hello");
-//        Mockito.when(product.getSearchableTerm()).thenReturn("hello");
-//
-//        storageService.addProduct(product);
-//
-//        var searchResults = searchService.search("hello");
-//        Assertions.assertTrue(TestTools.isCollectionOfSearchResult(searchResults, true));
-//    }
+    @Test
+    void whenSearchExisting_thenReturnsNotEmptyParticularCollection() {
+        storageService.initializeWithSamples();
+
+        // базовый мок продукта, который добавим в хранилище
+        var uniqueProduct = Mockito.mock(SimpleProduct.class);
+        Mockito.when(uniqueProduct.getId()).thenReturn(TestTools.UUID_PRODUCT);
+
+        Mockito.when(uniqueProduct.getSearchableName()).thenReturn(TestTools.PRODUCT_SEARCHABLE_NAME);
+        Mockito.when(uniqueProduct.getSearchableContentKind()).thenReturn(Product.SEARCHABLE_CONTENT_KIND);
+        Mockito.when(uniqueProduct.getSearchableTerm()).thenReturn(TestTools.PRODUCT_TITLE);
+
+        storageService.addProduct(uniqueProduct);
+
+        // поищем этот продукт
+        var searchResults = searchService.search(TestTools.SEARCH_PATTERN);
+        Assertions.assertFalse(searchResults.isEmpty());
+        Assertions.assertTrue(TestTools.isCollectionOfSearchResult(searchResults, true));
+
+        var foundProduct = searchResults.iterator().next();
+        Assertions.assertNotNull(foundProduct);
+        Assertions.assertEquals(TestTools.UUID_PRODUCT, UUID.fromString(foundProduct.getId()));
+    }
 }
