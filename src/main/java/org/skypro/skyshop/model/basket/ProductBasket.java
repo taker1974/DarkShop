@@ -27,7 +27,7 @@ import java.util.UUID;
  * Содержит информацию об UUID продукта о количестве каждого товара в корзине.
  *
  * @author Константин Терских, kostus.online.1974@yandex.ru, 2024
- * @version 1.1
+ * @version 1.2
  */
 @Component
 @SessionScope
@@ -43,6 +43,14 @@ public class ProductBasket {
      */
     public ProductBasket() {
         this.basket = HashMap.newHashMap(BASKET_INITIAL_CAPACITY);
+    }
+
+    /**
+     * Очистить корзину.
+     */
+    @SuppressWarnings("unused")
+    public void clear() {
+        basket.clear();
     }
 
     /*  Метод добавления продукта в корзину. Он будет принимать UUID id

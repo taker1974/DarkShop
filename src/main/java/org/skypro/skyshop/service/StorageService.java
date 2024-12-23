@@ -75,6 +75,17 @@ public final class StorageService {
     }
 
     /**
+     * Получение статьи по идентификатору.
+     *
+     * @param id идентификатор
+     * @return статья или пустой
+     */
+    @NotNull
+    public Optional<Article> getArticleById(@NotNull UUID id) {
+        return Optional.ofNullable(articles.get(id));
+    }
+
+    /**
      * @return коллекцию всех статей
      */
     @NotNull
@@ -93,55 +104,61 @@ public final class StorageService {
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
-    private void addProduct(Product product) {
+    /**
+     * Добавление товара в ассортимент.
+     *
+     * @param product товар
+     */
+    public void addProduct(@NotNull Product product) {
         products.put(product.getId(), product);
     }
 
-    private void addArticle(Article article) {
+    /**
+     * Добавление статьи.
+     *
+     * @param article статья
+     */
+    public void addArticle(@NotNull Article article) {
         articles.put(article.getId(), article);
+    }
+
+    /**
+     * Очистка данных.
+     */
+    public void clear() {
+        products.clear();
+        articles.clear();
     }
 
     /**
      * Инициализация для демонстрации работы сервиса.
      */
     public void initializeWithSamples() {
-        Product product1 = new SimpleProduct("Молоко", 80);
-        Product product2 = new FixPriceProduct("Хлеб");
-        Product product3 = new FixPriceProduct("Сыр");
-        Product product4 = new DiscountedProduct("Масло", 400, 20);
-        Product product5 = new DiscountedProduct("Яйца", 140, 10);
-        Product product6 = new SimpleProduct("Мясо", 900);
-        Product product7 = new SimpleProduct("Бластер", 200);
-        Product product8 = new SimpleProduct("Молоко \"Пискарёвское\" пастеризованное, 850 г", 80);
-        products.clear();
-        addProduct(product1);
-        addProduct(product2);
-        addProduct(product3);
-        addProduct(product4);
-        addProduct(product5);
-        addProduct(product6);
-        addProduct(product7);
-        addProduct(product8);
+        clear();
 
-        Article article1 = new Article("Хлеб и молоко - можно ли выжить?",
+        addProduct(new SimpleProduct("Молоко", 80));
+        addProduct(new FixPriceProduct("Хлеб"));
+        addProduct(new FixPriceProduct("Сыр"));
+        addProduct(new DiscountedProduct("Масло", 400, 20));
+        addProduct(new DiscountedProduct("Яйца", 140, 10));
+        addProduct(new SimpleProduct("Мясо", 900));
+        addProduct(new SimpleProduct("Бластер", 200));
+        addProduct(new SimpleProduct("Молоко \"Пискарёвское\" пастеризованное, 850 г", 80));
+
+        addArticle(new Article("Хлеб и молоко - можно ли выжить?",
                 "Выжить на хлебе и молоке невозможно, " +
                         "так как ни один продукт не способен дать человеку всё, " +
-                        "что нужно для здорового образа жизни.");
-        Article article2 = new Article("Что нужно есть время от времени",
+                        "что нужно для здорового образа жизни."));
+        addArticle(new Article("Что нужно есть время от времени",
                 "При составлении рациона питания стоит учитывать " +
                         "индивидуальные особенности человека, " +
                         "в том числе биологические ритмы. " +
-                        "Но мясо есть необходимо.");
-        Article article3 = new Article("Lorem Ipsum,",
+                        "Но мясо есть необходимо."));
+        addArticle(new Article("Lorem Ipsum,",
                 "У меня когда-то давно был автомобиль Toyota Ipsum в 10-м кузове. " +
-                        "Лучшая машина на планете Земля.");
-        Article article4 = new Article("Lorem Ipsum про автомобиль Toyota Ipsum в 10-м кузове.",
+                        "Лучшая машина на планете Земля."));
+        addArticle(new Article("Lorem Ipsum про автомобиль Toyota Ipsum в 10-м кузове.",
                 "У меня когда-то давно был автомобиль Toyota Ipsum в 10-м кузове. " +
-                        "Лучшая машина на планете Земля - это минивэн Toyota Ipsum");
-        articles.clear();
-        addArticle(article1);
-        addArticle(article2);
-        addArticle(article3);
-        addArticle(article4);
+                        "Лучшая машина на планете Земля - это минивэн Toyota Ipsum"));
     }
 }

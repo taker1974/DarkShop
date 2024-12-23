@@ -6,6 +6,8 @@ package org.skypro.skyshop.model.product;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 /**
  * Продукт по фиксированной цене.
  *
@@ -37,5 +39,26 @@ public final class FixPriceProduct extends Product {
     @Override
     public boolean isSpecial() {
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getTitle(), getPrice());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != this.getClass()) {
+            return false;
+        }
+        Product that = (Product) obj;
+        return Objects.equals(this.getTitle(), that.getTitle()) &&
+                this.getPrice() == that.getPrice();
     }
 }

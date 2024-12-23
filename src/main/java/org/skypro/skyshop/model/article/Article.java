@@ -6,6 +6,7 @@ package org.skypro.skyshop.model.article;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 import org.skypro.skyshop.model.search.Searchable;
 
 import java.util.Objects;
@@ -42,6 +43,16 @@ public final class Article implements Searchable {
         this.id = UUID.randomUUID();
         this.title = title;
         this.content = content;
+    }
+
+    /**
+     * Конструктор для тестов.
+     */
+    @TestOnly
+    public Article() {
+        this.id = UUID.randomUUID();
+        this.title = "";
+        this.content = "";
     }
 
     @NotNull

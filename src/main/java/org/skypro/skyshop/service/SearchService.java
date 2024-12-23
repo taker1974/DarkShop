@@ -44,7 +44,7 @@ public class SearchService {
      *
      * @param storageService экземпляр StorageService
      */
-    public SearchService(@NotNull StorageService storageService) {
+    public SearchService(@NotNull final StorageService storageService) {
         this.storageService = storageService;
     }
 
