@@ -37,7 +37,6 @@ class StorageServiceTest {
 
             void addProduct(@NotNull Product product) -> getProductById()
             void addArticle(@NotNull Article article) -> getArticleById()
-
             void initializeWithSamples() -> get...All()
      */
 
@@ -125,5 +124,25 @@ class StorageServiceTest {
         Assertions.assertFalse(searchableItems.isEmpty());
 
         Assertions.assertTrue(TestTools.isCollectionOfSearchable(searchableItems, true));
+    }
+
+    /*
+        Вспомогательные методы.
+     */
+
+    // clear
+    @Test
+    void whenClear_thenStorageServiceReturnsEmptyCollection() {
+        storageService.initializeWithSamples();
+
+        var searchableItems = storageService.getSearchableItems();
+        Assertions.assertNotNull(searchableItems);
+        Assertions.assertFalse(searchableItems.isEmpty());
+        Assertions.assertTrue(TestTools.isCollectionOfSearchable(searchableItems, true));
+
+        storageService.clear();
+        searchableItems = storageService.getSearchableItems();
+        Assertions.assertNotNull(searchableItems);
+        Assertions.assertTrue(searchableItems.isEmpty());
     }
 }
