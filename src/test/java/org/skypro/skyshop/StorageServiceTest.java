@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.skypro.skyshop.model.article.Article;
@@ -21,7 +20,7 @@ import java.util.UUID;
 class StorageServiceTest {
 
     /*  Тестируем реальный объект с реальными данными.
-        Моки продуктов и статей - по необходимости.
+        Макеты продуктов и статей - по необходимости.
 
         Основные методы:
             @NotNull Map<UUID, Product> getProductsAll()
