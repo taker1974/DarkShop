@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 @Service
 @Scope(value = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class BasketService {
+
     private final ProductBasket productBasket;
     private final StorageService storageService;
 
